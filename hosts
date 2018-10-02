@@ -31,9 +31,22 @@ openshift_master_default_subdomain=apps.1c56.example.opentlc.com
 #os_sdn_network_plugin_name='redhat/openshift-ovs-multitenant'
 
 # Set LDAP auth
-openshift_master_identity_providers=[{'name': 'my_ldap_provider', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider','attributes': {'id': ['dn'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']},'bindDN': 'uid=admin,cn=users,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com', 'bindPassword': 'r3dh4t1!', 'ca': '/etc/origin/master/ipa-ca.crt', 'insecure': 'false', 'url': 'ldaps://ipa.shared.example.opentlc.com:636/cn=users,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com?uid?sub?(memberOf=cn=ocp-users,cn=groups,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com)'}]
+openshift_master_identity_providers=[{'name': 'ldap', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider','attributes': {'id': ['dn'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=admin,cn=users,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com', 'bindPassword': 'r3dh4t1!', 'ca': '/etc/origin/master/ipa-ca.crt','insecure': 'false', 'url': 'ldaps://ipa.shared.example.opentlc.com:636/cn=users,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com?uid?sub?(memberOf=cn=ocp-users,cn=groups,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com)'}]
 
 openshift_master_ldap_ca_file=/root/ipa-ca.crt
+
+openshift_disable_check=docker_storage
+
+## Set Service Broker
+#oreg_url='registry.access.redhat.com'
+#openshift_examples_modify_imagestreams=true
+#openshift_docker_additional_registries=example.com:443
+#openshift_cockpit_deployer_prefix='registry.access.redhat.com'
+#openshift_web_console_prefix='registry.access.redhat.com
+#openshift_service_catalog_image_prefix='registry.access.redhat.com'
+#ansible_service_broker_image_prefix='registry.access.redhat.com'
+#template_service_broker_prefix='registry.access.redhat.com'
+template_service_broker_selector={'env':'infra'}
 
 ###########################################################################
 ### OpenShift Hosts
