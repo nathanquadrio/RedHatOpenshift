@@ -1,0 +1,88 @@
+[OSEv3:vars]
+
+###########################################################################
+### Ansible Vars
+###########################################################################
+timeout=60
+ansible_become=yes
+ansible_ssh_user=ec2-user
+
+# disable memory check, as we are not a production environment
+openshift_disable_check="memory_availability"
+
+# Set this line to enable NFS
+openshift_enable_unsupported_configurations=True
+
+# Set deployment type
+openshift_deployment_type=openshift-enterprise
+
+# Set master cluster method
+openshift_master_cluster_method=native
+
+# Set master cluster hostname
+openshift_master_cluster_hostname=loadbalancer1.1c56.internal
+
+# Set master cluster public hostname
+openshift_master_cluster_public_hostname=loadbalancer.1c56.example.opentlc.com
+
+# Set master default subdomain
+openshift_master_default_subdomain=apps.1c56.example.opentlc.com
+
+#os_sdn_network_plugin_name='redhat/openshift-ovs-multitenant'
+
+# Set LDAP auth
+openshift_master_identity_providers=[{'name': 'my_ldap_provider', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider','attributes': {'id': ['dn'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']},'bindDN': 'uid=admin,cn=users,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com', 'bindPassword': 'r3dh4t1!', 'ca': '/etc/origin/master/ipa-ca.crt', 'insecure': 'false', 'url': 'ldaps://ipa.shared.example.opentlc.com:636/cn=users,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com?uid?sub?(memberOf=cn=ocp-users,cn=groups,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com)'}]
+
+openshift_master_ldap_ca_file=/root/ipa-ca.crt
+
+###########################################################################
+### OpenShift Hosts
+###########################################################################
+[OSEv3:children]
+lb
+masters
+etcd
+nodes
+nfs
+#glusterfs
+
+[lb]
+loadbalancer1.1c56.internal
+
+[masters]
+master1.1c56.internal
+master2.1c56.internal
+master3.1c56.internal
+
+[etcd]
+master1.1c56.internal
+master2.1c56.internal
+master3.1c56.internal
+
+[nodes]
+## These are the masters
+master1.1c56.internal openshift_hostname=master1.1c56.internal  openshift_node_labels="{'env': 'master', 'cluster': '1c56'}"
+master2.1c56.internal openshift_hostname=master2.1c56.internal  openshift_node_labels="{'env': 'master', 'cluster': '1c56'}"
+master3.1c56.internal openshift_hostname=master3.1c56.internal  openshift_node_labels="{'env': 'master', 'cluster': '1c56'}"
+
+## These are infranodes
+infranode1.1c56.internal openshift_hostname=infranode1.1c56.internal  openshift_node_labels="{'env':'infra', 'cluster': '1c56'}"
+infranode2.1c56.internal openshift_hostname=infranode2.1c56.internal  openshift_node_labels="{'env':'infra', 'cluster': '1c56'}"
+
+## These are regular nodes
+node1.1c56.internal openshift_hostname=node1.1c56.internal  openshift_node_labels="{'env':'app', 'cluster': '1c56'}"
+node2.1c56.internal openshift_hostname=node2.1c56.internal  openshift_node_labels="{'env':'app', 'cluster': '1c56'}"
+node3.1c56.internal openshift_hostname=node3.1c56.internal  openshift_node_labels="{'env':'app', 'cluster': '1c56'}"
+
+## These are CNS nodes
+# support1.1c56.internal openshift_hostname=support1.1c56.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': '1c56'}"
+# support2.1c56.internal openshift_hostname=support2.1c56.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': '1c56'}"
+# support3.1c56.internal openshift_hostname=support3.1c56.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': '1c56'}"
+
+[nfs]
+support1.1c56.internal openshift_hostname=support1.1c56.internal
+
+#[glusterfs]
+# support1.1c56.internal glusterfs_devices='[ "/dev/xvdd" ]'
+# support2.1c56.internal glusterfs_devices='[ "/dev/xvdd" ]'
+# support3.1c56.internal glusterfs_devices='[ "/dev/xvdd" ]'
